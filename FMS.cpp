@@ -31,63 +31,63 @@ private:
 
     Node *root;
 
-    Node *inSucc(Node *ptr)
+    Node *inSucc(Node *temp)
     {
-        if (ptr->rthread)
+        if (temp->rthread)
         {
-            return ptr->right;
+            return temp->right;
         }
-        ptr = ptr->right;
-        while (!ptr->lthread)
+        temp = temp->right;
+        while (!temp->lthread)
         {
-            ptr = ptr->left;
+            temp = temp->left;
         }
-        return ptr;
+        return temp;
     }
 
-    Node *inPred(Node *ptr)
+    Node *inPred(Node *temp)
     {
-        if (ptr->lthread)
+        if (temp->lthread)
         {
-            return ptr->left;
+            return temp->left;
         }
-        ptr = ptr->left;
-        while (!ptr->rthread)
+        temp = temp->left;
+        while (!temp->rthread)
         {
-            ptr = ptr->right;
+            temp = temp->right;
         }
-        return ptr;
+        return temp;
     }
 
-    Node *caseA(Node *par, Node *ptr)
+    Node *caseA(Node *par, Node *temp)
     {
         if (!par)
         {
             root = nullptr;
         }
-        else if (par->left == ptr)
+        else if (par->left == temp)
         {
             par->lthread = true;
-            par->left = ptr->left;
+            par->left = temp->left;
         }
         else
         {
             par->rthread = true;
-            par->right = ptr->right;
+            par->right = temp->right;
         }
-        delete ptr;
+        delete temp;
         return root;
     }
 
-    Node *caseB(Node *par, Node *ptr)
+    Node *caseB(Node *par, Node *temp)
     {
-        Node *child = ptr->lthread ? ptr->right : ptr->left;
+        Node *child = temp->lthread ? temp->right : temp->left;
 
         if (!par)
         {
             root = child;
         }
-        else if (par->left == ptr)
+        else if (par->left == temp)
         {
             par->left = child;
         }
@@ -96,26 +96,26 @@ private:
             par->right = child;
         }
 
-        Node *s = inSucc(ptr);
-        Node *p = inPred(ptr);
+        Node *s = inSucc(temp);
+        Node *p = inPred(temp);
 
-        if (!ptr->lthread)
+        if (!temp->lthread)
         {
             p->right = s;
         }
-        else if (!ptr->rthread)
+        else if (!temp->rthread)
         {
             s->left = p;
         }
 
-        delete ptr;
+        delete temp;
         return root;
     }
 
-    Node *caseC(Node *par, Node *ptr)
+    Node *caseC(Node *par, Node *temp)
     {
-        Node *succ = ptr->right;
-        Node *parsucc = ptr;
+        Node *succ = temp->right;
+        Node *parsucc = temp;
 
         while (!succ->lthread)
         {
@@ -123,7 +123,7 @@ private:
             succ = succ->left;
         }
 
-        ptr->info = succ->info;
+        temp->info = succ->info;
 
         if (succ->lthread && succ->rthread)
         {
@@ -145,16 +145,16 @@ private:
             return;
         }
 
-        Node *ptr = node;
-        while (!ptr->lthread)
+        Node *temp = node;
+        while (!temp->lthread)
         {
-            ptr = ptr->left;
+            temp = temp->left;
         }
 
-        while (ptr)
+        while (temp)
         {
-            displayFile(ptr);
-            ptr = inSucc(ptr);
+            displayFile(temp);
+            temp = inSucc(temp);
         }
     }
 
@@ -170,24 +170,24 @@ public:
 
     void insert(const File &file)
     {
-        Node *tmp = new Node(file);
-        Node *ptr = root;
+        Node *NewNode = new Node(file);
+        Node *temp = root;
         Node *par = nullptr;
 
-        while (ptr)
+        while (temp)
         {
-            par = ptr;
-            if (file.name == ptr->info.name)
+            par = temp;
+            if (file.name == temp->info.name)
             {
                 cout << "\nFile \"" << file.name << "\" already exists.\n";
-                delete tmp;
+                delete NewNode;
                 return;
             }
-            if (file.name < ptr->info.name)
+            if (file.name < temp->info.name)
             {
-                if (!ptr->lthread)
+                if (!temp->lthread)
                 {
-                    ptr = ptr->left;
+                    temp = temp->left;
                 }
                 else
                 {
@@ -196,9 +196,9 @@ public:
             }
             else
             {
-                if (!ptr->rthread)
+                if (!temp->rthread)
                 {
-                    ptr = ptr->right;
+                    temp = temp->right;
                 }
                 else
                 {
@@ -208,42 +208,42 @@ public:
         }
         if (!par)
         {
-            root = tmp;
+            root = NewNode;
         }
         else if (file.name < par->info.name)
         {
-            tmp->left = par->left;
-            tmp->right = par;
+            NewNode->left = par->left;
+            NewNode->right = par;
             par->lthread = false;
-            par->left = tmp;
+            par->left = NewNode;
         }
         else
         {
-            tmp->left = par;
-            tmp->right = par->right;
+            NewNode->left = par;
+            NewNode->right = par->right;
             par->rthread = false;
-            par->right = tmp;
+            par->right = NewNode;
         }
         cout << "\nFile \"" << file.name << "\" inserted successfully.\n";
     }
 
     void remove(const string &fname)
     {
-        Node *ptr = root;
+        Node *temp = root;
         Node *par = nullptr;
 
-        while (ptr)
+        while (temp)
         {
-            if (fname == ptr->info.name)
+            if (fname == temp->info.name)
             {
                 break;
             }
-            par = ptr;
-            if (fname < ptr->info.name)
+            par = temp;
+            if (fname < temp->info.name)
             {
-                if (!ptr->lthread)
+                if (!temp->lthread)
                 {
-                    ptr = ptr->left;
+                    temp = temp->left;
                 }
                 else
                 {
@@ -252,9 +252,9 @@ public:
             }
             else
             {
-                if (!ptr->rthread)
+                if (!temp->rthread)
                 {
-                    ptr = ptr->right;
+                    temp = temp->right;
                 }
                 else
                 {
@@ -263,23 +263,23 @@ public:
             }
         }
 
-        if (!ptr || ptr->info.name != fname)
+        if (!temp || temp->info.name != fname)
         {
             cout << "\nFile not found: \"" << fname << "\".\n";
             return;
         }
 
-        if (!ptr->lthread && !ptr->rthread)
+        if (!temp->lthread && !temp->rthread) // The node has two children.
         {
-            root = caseC(par, ptr);
+            root = caseC(par, temp);
         }
-        else if (!ptr->lthread || !ptr->rthread)
+        else if (!temp->lthread || !temp->rthread) // The node has one child.
         {
-            root = caseB(par, ptr);
+            root = caseB(par, temp);
         }
-        else
+        else // The node is a leaf node.
         {
-            root = caseA(par, ptr);
+            root = caseA(par, temp);
         }
 
         cout << "\nFile \"" << fname << "\" deleted successfully.\n";
@@ -294,7 +294,7 @@ public:
 int main()
 {
     ThreadedBST tree;
-    int choice;
+    string choice;
 
     while (true)
     {
@@ -306,9 +306,7 @@ int main()
         cout << "Enter your choice: ";
         cin >> choice;
 
-        switch (choice)
-        {
-        case 1:
+        if (choice == "1")
         {
             File file;
             cout << "Enter file name: ";
@@ -318,30 +316,29 @@ int main()
             cout << "Enter file type: ";
             cin >> file.type;
             tree.insert(file);
-            break;
+         
         }
-        case 2:
+        else if (choice == "2")
         {
             string fname;
             cout << "Enter the file name to delete: ";
             cin >> fname;
             tree.remove(fname);
-            break;
+           
         }
-        case 3:
+        else if (choice == "3")
         {
             tree.displayInorder();
-            break;
+          
         }
-        case 4:
+        else if (choice == "4")
         {
             cout << "\nExiting...\n";
             return 0;
         }
-        default:
+        else
         {
             cout << "\nInvalid choice. Try again.\n";
-        }
         }
     }
 }
