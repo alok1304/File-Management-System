@@ -27,7 +27,7 @@ A C++ application implementing a file management system using a Threaded Binary 
 
 ### Clone the repository:
 ```bash
-git clone https://github.com/your-username/File-Management-System.git
+git clone https://github.com/alok1304/File-Management-System.git
 cd File-Management-System
 ```
 
